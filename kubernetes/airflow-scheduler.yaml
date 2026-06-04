@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-scheduler
+  namespace: default
+  labels:
+    app: airflow-scheduler
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: airflow-scheduler
+  template:
+    metadata:
+      labels:
+        app: airflow-scheduler
+    spec:
+      containers:
+        - name: airflow-scheduler
+          image: ${AIRFLOW_IMAGE}
+          command: ["airflow", "scheduler"]
+          livenessProbe:
+            exec:
+              command:
+                - airflow
+                - jobs
+                - check
+                - --job-type
+                - SchedulerJob
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+          envFrom:
+            - configMapRef:
+                name: airflow-config
+          volumeMounts:
+            - name: airflow-workspace
+              mountPath: /opt/airflow
+      volumes:
+        - name: airflow-workspace
+          persistentVolumeClaim:
+            claimName: airflow-pvc

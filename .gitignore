@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Pytest / Testes
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Dados Locais (Data Lake)
+data/
+
+# Logs e metadados do Airflow
+logs/
+plugins/
+airflow.db
+.airflow/
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Ambientes / Credentials
+.env
+
+# Linters / Cache de Ferramentas
+.ruff_cache/
+
+# Process IDs
+*.pid
+
+# Airflow local extra (evita cometer se gerado por engano)
+airflow.cfg
+
+# OS e Arquivos de Sistema
+.DS_Store
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: airflow-config
+  namespace: default
+data:
+  AIRFLOW__CORE__EXECUTOR: ${AIRFLOW_EXECUTOR}
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+  AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+  AIRFLOW__CORE__LOAD_EXAMPLES: "${AIRFLOW_LOAD_EXAMPLES}"
+  AIRFLOW__CORE__LOGGING_LEVEL: ${AIRFLOW_LOGGING_LEVEL}
+  # Conexão HTTP do Banco Central para o sensor e ingestão
+  AIRFLOW_CONN_BCB_API: http://https%3A%2F%2Fapi.bcb.gov.br
+  # Requisitos do Python a serem instalados nas subtasks
+  _PIP_ADDITIONAL_REQUIREMENTS: "${AIRFLOW_PIP_ADDITIONAL_REQUIREMENTS}"

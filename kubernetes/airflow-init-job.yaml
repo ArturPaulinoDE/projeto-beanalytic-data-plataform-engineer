@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: airflow-init
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - name: airflow-init
+          image: ${AIRFLOW_IMAGE}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              airflow db init &&
+              airflow users create \
+                --username ${AIRFLOW_ADMIN_USERNAME} \
+                --firstname ${AIRFLOW_ADMIN_FIRSTNAME} \
+                --lastname ${AIRFLOW_ADMIN_LASTNAME} \
+                --role ${AIRFLOW_ADMIN_ROLE} \
+                --email ${AIRFLOW_ADMIN_EMAIL} \
+                --password ${AIRFLOW_ADMIN_PASSWORD}
+          envFrom:
+            - configMapRef:
+                name: airflow-config
+      restartPolicy: OnFailure

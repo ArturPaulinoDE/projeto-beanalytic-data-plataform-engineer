@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-webserver
+  namespace: default
+  labels:
+    app: airflow-webserver
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: airflow-webserver
+  template:
+    metadata:
+      labels:
+        app: airflow-webserver
+    spec:
+      containers:
+        - name: airflow-webserver
+          image: ${AIRFLOW_IMAGE}
+          command: ["airflow", "webserver"]
+          ports:
+            - containerPort: ${AIRFLOW_WEBSERVER_PORT}
+              name: webserver
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: ${AIRFLOW_WEBSERVER_PORT}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: ${AIRFLOW_WEBSERVER_PORT}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+          envFrom:
+            - configMapRef:
+                name: airflow-config
+          volumeMounts:
+            - name: airflow-workspace
+              mountPath: /opt/airflow
+      volumes:
+        - name: airflow-workspace
+          persistentVolumeClaim:
+            claimName: airflow-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-webserver
+  namespace: default
+spec:
+  type: NodePort
+  ports:
+    - port: ${AIRFLOW_WEBSERVER_PORT}
+      targetPort: ${AIRFLOW_WEBSERVER_PORT}
+      nodePort: 30080
+  selector:
+    app: airflow-webserver

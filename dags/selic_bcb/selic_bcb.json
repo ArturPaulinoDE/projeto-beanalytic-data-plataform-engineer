@@ -1,0 +1,7 @@
+{
+  "dag_id": "pipeline_taxa_selic",
+  "schedule_interval": "@daily",
+  "base_dir": "/opt/airflow/data",
+  "retries": 2,
+  "retry_delay": 30
+}
